@@ -16,6 +16,24 @@ jobs:
     env:
       JAVA_VERSION: ${{ matrix.java }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@34cbc43f0b10c9dda284e663cf43c2ebaf83e956
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            1k4dacprodeus2file4.blob.core.windows.net:443
+            artifactcache.actions.githubusercontent.com:443
+            api.azul.com:443
+            cdn.azul.com:443
+            coveralls.io:443
+            github.com:443
+            api.github.com:443
+            pipelines.actions.githubusercontent.com:443
+            repo.maven.apache.org:443
+            repo1.maven.org:443
+            scans-in.gradle.com:443
+            services.gradle.org:443
+            sonarcloud.io:443
       - uses: actions/checkout@v3
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v3
@@ -66,7 +84,8 @@ jobs:
       - name: Stop Gradle daemon
         if: always()
         run: ./gradlew --stop
-      - uses: andymckay/cancel-action@0.2
+      - name: Cancel if failed
+        uses: andymckay/cancel-action@0.2
         continue-on-error: true
         if: failure()
 
@@ -98,7 +117,8 @@ jobs:
       - name: Stop Gradle daemon
         if: always()
         run: ./gradlew --stop
-      - uses: andymckay/cancel-action@0.2
+      - name: Cancel if failed
+        uses: andymckay/cancel-action@0.2
         continue-on-error: true
         if: failure()
 
